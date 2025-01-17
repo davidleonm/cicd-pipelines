@@ -47,7 +47,7 @@ jobs:
           echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
           while read -d, -r pair; do
             IFS='=' read -r key val <<<"$pair"
-            echo $key="$val" >> $GITHUB_ENV
+            echo $key=\"$val\" >> $GITHUB_ENV
           done <<<"${{ secrets.vars-list }},"
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
