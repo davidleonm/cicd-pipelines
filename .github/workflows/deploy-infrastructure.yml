@@ -45,7 +45,6 @@ jobs:
       - name: Create needed kube configuration
         run: echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
       - name: Create environment variables from secret list
-        if: ${{ secrets.vars-list != '' }}
         run: |
           IFS=',' read -r -a pairs <<< "${{ secrets.vars-list }}"
           for pair in "${pairs[@]}"; do
