@@ -44,12 +44,12 @@ jobs:
           encodedString: ${{ secrets.kubernetes-config-base64 }}
       - name: Create needed kube configuration
         run: echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
-      - name: Create environment variables from secret list
+      - name: Create environment variables from secrets list
         run: |
           IFS=',' read -r -a pairs <<< "${{ secrets.vars-list }}"
           for pair in "${pairs[@]}"; do
             IFS='=' read -r name value <<< "$pair"
-            echo "$name=$value" >> $GITHUB_ENV
+            echo "$name=\"$value\"" >> $GITHUB_ENV
           done
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
