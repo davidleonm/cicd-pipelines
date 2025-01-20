@@ -21,7 +21,7 @@ on:
         required: true
       vars-list:
         description: List of variables needed for certain configurations
-        required: false
+        required: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
