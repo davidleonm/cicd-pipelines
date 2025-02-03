@@ -76,4 +76,6 @@ variable "security_context" {
     fs_group        = optional(number)
     run_as_non_root = optional(bool)
   })
+
+  default = {}
 }
