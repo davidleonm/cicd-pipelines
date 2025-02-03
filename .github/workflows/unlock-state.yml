@@ -1,0 +1,44 @@
+name: Deploy infrastructure
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        description: The Terraform version to be used
+        type: string
+        required: true
+      env-name:
+        description: Environment name (staging or production)
+        type: string
+        required: true
+      lock-id:
+        description: The lock ID to be used
+        type: string
+        required: true
+    secrets:
+      kubernetes-config-base64:
+        description: Configuration file for Kubernetes in base64
+        required: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CONFIG_PATH: environments/${{ inputs.env-name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          terraform_version: ${{ inputs.terraform-version }}
+      - name: Extract Kubernetes configuration
+        id: k8s-config
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: config
+          fileDir: .kube/
+          encodedString: ${{ secrets.kubernetes-config-base64 }}
+      - name: Terraform init
+        run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
+      - name: Unlock state
+        run: terraform force-unlock -force ${{ inputs.lock-id }}
