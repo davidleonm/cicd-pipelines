@@ -66,3 +66,14 @@ variable "environment_variables" {
   type        = map(string)
   sensitive   = true
 }
+
+variable "security_context" {
+  description = "Security context for the container"
+
+  type = object({
+    run_as_user     = optional(number)
+    run_as_group    = optional(number)
+    fs_group        = optional(number)
+    run_as_non_root = optional(bool)
+  })
+}

@@ -147,13 +147,7 @@ resource "kubernetes_stateful_set" "statefulset" {
       spec {
         service_account_name = kubernetes_service_account.service_account.metadata[0].name
         restart_policy       = "Always"
-
-        security_context {
-          run_as_user     = 1000
-          run_as_group    = 1003
-          fs_group        = 1003
-          run_as_non_root = true
-        }
+        security_context = var.security_context
 
         container {
           name              = var.name
