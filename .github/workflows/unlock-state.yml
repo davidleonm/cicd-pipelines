@@ -1,4 +1,4 @@
-name: Deploy infrastructure
+name: Unlock state
 on:
   workflow_call:
     inputs:
