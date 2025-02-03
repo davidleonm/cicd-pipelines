@@ -19,7 +19,7 @@ on:
         description: Configuration file for Kubernetes in base64
         required: true
 jobs:
-  deploy:
+  unlock-state:
     runs-on: ubuntu-latest
     env:
       CONFIG_PATH: environments/${{ inputs.env-name }}
@@ -38,6 +38,8 @@ jobs:
           fileName: config
           fileDir: .kube/
           encodedString: ${{ secrets.kubernetes-config-base64 }}
+      - name: Create environment variable needed
+        run: echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
       - name: Terraform init
         run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
       - name: Unlock state
