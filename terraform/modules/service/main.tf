@@ -184,6 +184,16 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
 
+          dynamic "volume_mount" {
+            for_each = { for secret in var.secret_volumes : secret.name => secret }
+
+            content {
+              name       = volume_mount.value.name
+              mount_path = volume_mount.value.container_path
+              read_only  = volume_mount.value.read_only
+            }
+          }
+
           dynamic "env" {
             for_each = var.environment_variables
 
@@ -214,6 +224,18 @@ resource "kubernetes_stateful_set" "statefulset" {
 
             config_map {
               name = volume.value.name
+            }
+          }
+        }
+
+        dynamic "volume" {
+          for_each = { for secret in var.secret_volumes : secret.name => secret }
+
+          content {
+            name = volume.value.name
+
+            secret {
+              secret_name = volume.value.secret_name
             }
           }
         }

@@ -4,6 +4,6 @@ output "fully_qualified_name" {
 }
 
 output "container_port" {
-    description = "Internal port of the container"
-    value       = var.container_port
+  description = "Internal port of the container"
+  value       = var.container_port
 }

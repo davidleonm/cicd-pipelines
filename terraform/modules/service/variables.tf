@@ -56,6 +56,19 @@ variable "config_maps" {
   default = []
 }
 
+variable "secret_volumes" {
+  description = "List of volumes to mount from secrets"
+
+  type = list(object({
+    name           = string
+    secret_name    = string
+    container_path = string
+    read_only      = bool
+  }))
+
+  default = []
+}
+
 variable "docker_image" {
   description = "Docker image to use"
   type        = string
