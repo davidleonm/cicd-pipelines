@@ -1,12 +1,14 @@
 locals {
-  probe_url                   = "/health"
-  probe_readiness_initial_delay_seconds = 10
-  probe_liveness_initial_delay_seconds = 15
-  probe_startup_initial_delay_seconds = 5
-  probe_period_seconds        = 300
-  probe_failure_threshold     = 3
-  probe_timeout_seconds       = 10
-  probe_scheme                = "HTTPS"
+  probe_http_url    = "/health"
+  probe_http_scheme = "HTTPS"
+
+  probe_startup_initial_delay_seconds   = 10
+  probe_readiness_initial_delay_seconds = 15
+  probe_liveness_initial_delay_seconds  = 15
+
+  probe_period_seconds    = 60
+  probe_failure_threshold = 3
+  probe_timeout_seconds   = 10
 }
 
 resource "kubernetes_service_account" "service_account" {
@@ -214,6 +216,34 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
 
+          dynamic "startup_probe" {
+            for_each = var.enable_http_probes || var.enable_tcp_probes ? [1] : []
+
+            content {
+              dynamic "tcp_socket" {
+                for_each = var.enable_tcp_probes ? [1] : []
+
+                content {
+                  port = var.container_port
+                }
+              }
+
+              dynamic "http_get" {
+                for_each = var.enable_http_probes ? [1] : []
+
+                content {
+                  path   = local.probe_http_url
+                  port   = var.container_port
+                  scheme = local.probe_http_scheme
+                }
+              }
+
+              initial_delay_seconds = local.probe_startup_initial_delay_seconds
+              failure_threshold     = local.probe_failure_threshold
+              timeout_seconds       = local.probe_timeout_seconds
+            }
+          }
+
           dynamic "liveness_probe" {
             for_each = var.enable_http_probes || var.enable_tcp_probes ? [1] : []
 
@@ -230,9 +260,9 @@ resource "kubernetes_stateful_set" "statefulset" {
                 for_each = var.enable_http_probes ? [1] : []
 
                 content {
-                  path   = local.probe_url
+                  path   = local.probe_http_url
                   port   = var.container_port
-                  scheme = local.probe_scheme
+                  scheme = local.probe_http_scheme
                 }
               }
 
@@ -259,42 +289,13 @@ resource "kubernetes_stateful_set" "statefulset" {
                 for_each = var.enable_http_probes ? [1] : []
 
                 content {
-                  path   = local.probe_url
+                  path   = local.probe_http_url
                   port   = var.container_port
-                  scheme = local.probe_scheme
+                  scheme = local.probe_http_scheme
                 }
               }
 
               initial_delay_seconds = local.probe_readiness_initial_delay_seconds
-              period_seconds        = local.probe_period_seconds
-              failure_threshold     = local.probe_failure_threshold
-              timeout_seconds       = local.probe_timeout_seconds
-            }
-          }
-
-          dynamic "startup_probe" {
-            for_each = var.enable_http_probes || var.enable_tcp_probes ? [1] : []
-
-            content {
-              dynamic "tcp_socket" {
-                for_each = var.enable_tcp_probes ? [1] : []
-
-                content {
-                  port = var.container_port
-                }
-              }
-
-              dynamic "http_get" {
-                for_each = var.enable_http_probes ? [1] : []
-
-                content {
-                  path   = local.probe_url
-                  port   = var.container_port
-                  scheme = local.probe_scheme
-                }
-              }
-
-              initial_delay_seconds = local.probe_startup_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
