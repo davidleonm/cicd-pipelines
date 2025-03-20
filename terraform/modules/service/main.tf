@@ -1,6 +1,6 @@
 locals {
   probe_url                   = "/health"
-  probe_initial_delay_seconds = 30
+  probe_initial_delay_seconds = 10
   probe_period_seconds        = 300
   probe_failure_threshold     = 3
   probe_timeout_seconds       = 10
