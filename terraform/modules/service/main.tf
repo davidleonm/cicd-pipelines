@@ -220,7 +220,7 @@ resource "kubernetes_stateful_set" "statefulset" {
             initial_delay_seconds = local.probe_initial_delay_seconds
             period_seconds        = local.probe_period_seconds
             failure_threshold     = local.probe_failure_threshold
-            timeout_seconds       = local
+            timeout_seconds       = local.probe_timeout_seconds
           }
 
           readiness_probe {
@@ -232,7 +232,7 @@ resource "kubernetes_stateful_set" "statefulset" {
             initial_delay_seconds = local.probe_initial_delay_seconds
             period_seconds        = local.probe_period_seconds
             failure_threshold     = local.probe_failure_threshold
-            timeout_seconds       = local
+            timeout_seconds       = local.probe_timeout_seconds
           }
         }
 
