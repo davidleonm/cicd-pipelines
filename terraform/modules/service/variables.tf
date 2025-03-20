@@ -92,3 +92,9 @@ variable "security_context" {
 
   default = {}
 }
+
+variable "enable_probes" {
+  description = "Enable probes for the service"
+  type        = bool
+  default     = false
+}

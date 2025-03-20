@@ -211,28 +211,36 @@ resource "kubernetes_stateful_set" "statefulset" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path = local.probe_url
-              port = var.container_port
-            }
+          dynamic "liveness_probe" {
+            for_each = var.enable_probes ? [1] : []
 
-            initial_delay_seconds = local.probe_initial_delay_seconds
-            period_seconds        = local.probe_period_seconds
-            failure_threshold     = local.probe_failure_threshold
-            timeout_seconds       = local.probe_timeout_seconds
+            content {
+              http_get {
+                path = local.probe_url
+                port = var.container_port
+              }
+
+              initial_delay_seconds = local.probe_initial_delay_seconds
+              period_seconds        = local.probe_period_seconds
+              failure_threshold     = local.probe_failure_threshold
+              timeout_seconds       = local.probe_timeout_seconds
+            }
           }
 
-          readiness_probe {
-            http_get {
-              path = local.probe_url
-              port = var.container_port
-            }
+          dynamic "readiness_probe" {
+            for_each = var.enable_probes ? [1] : []
 
-            initial_delay_seconds = local.probe_initial_delay_seconds
-            period_seconds        = local.probe_period_seconds
-            failure_threshold     = local.probe_failure_threshold
-            timeout_seconds       = local.probe_timeout_seconds
+            content {
+              http_get {
+                path = local.probe_url
+                port = var.container_port
+              }
+
+              initial_delay_seconds = local.probe_initial_delay_seconds
+              period_seconds        = local.probe_period_seconds
+              failure_threshold     = local.probe_failure_threshold
+              timeout_seconds       = local.probe_timeout_seconds
+            }
           }
         }
 
