@@ -217,15 +217,15 @@ resource "kubernetes_stateful_set" "statefulset" {
 
             content {
               http_get {
-                path = local.probe_url
-                port = var.container_port
+                path   = local.probe_url
+                port   = var.container_port
+                scheme = local.probe_scheme
               }
 
               initial_delay_seconds = local.probe_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
-              scheme                = local.probe_scheme
             }
           }
 
@@ -234,15 +234,15 @@ resource "kubernetes_stateful_set" "statefulset" {
 
             content {
               http_get {
-                path = local.probe_url
-                port = var.container_port
+                path   = local.probe_url
+                port   = var.container_port
+                scheme = local.probe_scheme
               }
 
               initial_delay_seconds = local.probe_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
-              scheme                = local.probe_scheme
             }
           }
         }
