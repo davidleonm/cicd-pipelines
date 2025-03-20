@@ -4,6 +4,7 @@ locals {
   probe_period_seconds        = 300
   probe_failure_threshold     = 3
   probe_timeout_seconds       = 10
+  probe_scheme                = "HTTPS"
 }
 
 resource "kubernetes_service_account" "service_account" {
@@ -224,6 +225,7 @@ resource "kubernetes_stateful_set" "statefulset" {
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
+              scheme                = local.probe_scheme
             }
           }
 
@@ -240,6 +242,7 @@ resource "kubernetes_stateful_set" "statefulset" {
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
+              scheme                = local.probe_scheme
             }
           }
         }
