@@ -1,6 +1,8 @@
 locals {
   probe_url                   = "/health"
-  probe_initial_delay_seconds = 10
+  probe_readiness_initial_delay_seconds = 10
+  probe_liveness_initial_delay_seconds = 15
+  probe_startup_initial_delay_seconds = 5
   probe_period_seconds        = 300
   probe_failure_threshold     = 3
   probe_timeout_seconds       = 10
@@ -234,7 +236,7 @@ resource "kubernetes_stateful_set" "statefulset" {
                 }
               }
 
-              initial_delay_seconds = local.probe_initial_delay_seconds
+              initial_delay_seconds = local.probe_liveness_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
@@ -263,7 +265,7 @@ resource "kubernetes_stateful_set" "statefulset" {
                 }
               }
 
-              initial_delay_seconds = local.probe_initial_delay_seconds
+              initial_delay_seconds = local.probe_readiness_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
@@ -292,7 +294,7 @@ resource "kubernetes_stateful_set" "statefulset" {
                 }
               }
 
-              initial_delay_seconds = local.probe_initial_delay_seconds
+              initial_delay_seconds = local.probe_startup_initial_delay_seconds
               period_seconds        = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
