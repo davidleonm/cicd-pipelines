@@ -93,8 +93,14 @@ variable "security_context" {
   default = {}
 }
 
-variable "enable_probes" {
-  description = "Enable probes for the service"
+variable "enable_http_probes" {
+  description = "Enable probes for the service using HTTP"
+  type        = bool
+  default     = false
+}
+
+variable "enable_tcp_probes" {
+  description = "Enable probes for the service using TCP"
   type        = bool
   default     = false
 }

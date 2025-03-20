@@ -1,5 +1,5 @@
 output "fully_qualified_name" {
-  description = "FQDM of the service"
+  description = "FQDN of the service"
   value       = "${var.name}.${var.namespace}.svc.cluster.local"
 }
 
