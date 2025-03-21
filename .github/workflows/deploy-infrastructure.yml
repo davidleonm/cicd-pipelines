@@ -7,7 +7,7 @@ on:
         type: string
         required: true
       env-name:
-        description: Environment name (staging or production)
+        description: Environment name
         type: string
         required: true
       destroy-environment:

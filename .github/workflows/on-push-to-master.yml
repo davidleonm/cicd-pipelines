@@ -1,0 +1,33 @@
+# Deploy common infrastructure for all projects
+name: on-push-to-master
+concurrency:
+  group: on-push-to-master
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  validate-tf:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          terraform_version: ~1.10.0
+      - uses: terraform-linters/setup-tflint@v4
+      - run: terraform init --backend=false && tflint --init
+      - run: tflint
+      - run: terraform validate
+  deploy:
+    needs: validate-tf
+    uses: ./.github/workflows/deploy-infrastructure.yml
+    with:
+      terraform-version: ~1.10.0
+      env-name: root
+    secrets:
+      kubernetes-config-base64: ${{ secrets.KUBERNETES_CONFIG_BASE64 }}
