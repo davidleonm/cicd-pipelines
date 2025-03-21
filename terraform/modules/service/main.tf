@@ -239,7 +239,6 @@ resource "kubernetes_stateful_set" "statefulset" {
               }
 
               initial_delay_seconds = local.probe_startup_initial_delay_seconds
-              probe_period_seconds  = local.probe_period_seconds
               failure_threshold     = local.probe_failure_threshold
               timeout_seconds       = local.probe_timeout_seconds
             }
