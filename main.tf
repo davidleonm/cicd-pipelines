@@ -15,6 +15,6 @@ terraform {
 
 resource "kubernetes_namespace" "grafana" {
   metadata {
-    name = "grafana"
+    name = var.grafana_namespace
   }
 }
