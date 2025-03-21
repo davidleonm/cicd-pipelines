@@ -20,8 +20,8 @@ variable "destinations_prometheus_url" {
 }
 
 variable "destinations_prometheus_username" {
-  type    = number
-  default = 2337443
+  type    = string
+  default = "2337443"
 }
 
 variable "destinations_loki_url" {
@@ -30,8 +30,8 @@ variable "destinations_loki_url" {
 }
 
 variable "destinations_loki_username" {
-  type    = number
-  default = 1164399
+  type    = string
+  default = "1164399"
 }
 
 variable "destinations_otlp_url" {
@@ -40,8 +40,8 @@ variable "destinations_otlp_url" {
 }
 
 variable "destinations_otlp_username" {
-  type    = number
-  default = 1158713
+  type    = string
+  default = "1158713"
 }
 
 variable "destinations_pyroscope_url" {
@@ -50,8 +50,8 @@ variable "destinations_pyroscope_url" {
 }
 
 variable "destinations_pyroscope_username" {
-  type    = number
-  default = 1206602
+  type    = string
+  default = "1206602"
 }
 
 variable "fleetmanagement_url" {
@@ -60,6 +60,6 @@ variable "fleetmanagement_url" {
 }
 
 variable "fleetmanagement_username" {
-  type    = number
-  default = 1206602
+  type    = string
+  default = "1206602"
 }
