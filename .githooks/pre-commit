@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# Prevent commit on errors
+set -eo pipefail
+
+# Rewrite Terraform configuration files to a canonical format and style
+terraform fmt --recursive

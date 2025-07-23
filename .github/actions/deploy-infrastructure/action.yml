@@ -1,0 +1,71 @@
+name: Deploy infrastructure
+
+inputs:
+  terraform-version:
+    description: The Terraform version to be used
+    required: true
+  env-name:
+    description: Environment name
+    required: true
+  destroy-environment:
+    description: Destroy the environment
+    required: false
+    default: false
+  kubernetes-config-base64:
+    description: Configuration file for Kubernetes in base64
+    required: true
+  vars-list:
+    description: List of variables needed for certain configurations
+    required: false
+
+runs:
+  using: composite
+  env:
+    CONFIG_PATH: environments/${{ inputs.env-name }}
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_wrapper: false
+        terraform_version: ${{ inputs.terraform-version }}
+
+    - name: Extract Kubernetes configuration
+      id: k8s-config
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: config
+        fileDir: .kube/
+        encodedString: ${{ inputs.kubernetes-config-base64 }}
+
+    - name: Create environment variables needed
+      run: |
+        echo "KUBE_CONFIG_PATH=${{ steps.k8s-config.outputs.filePath }}" >> $GITHUB_ENV
+        if [ -n "${{ inputs.vars-list }}" ]; then
+          while read -d, -r pair; do
+            IFS='=' read -r key val <<<"$pair"
+            echo "$key=$val" >> $GITHUB_ENV
+          done <<<"${{ inputs.vars-list }},"
+        fi
+
+    - name: Terraform init
+      run: terraform init -input=false -backend-config="${{ env.CONFIG_PATH }}/kubernetes.tfbackend"
+
+    - name: Terraform validate
+      run: terraform validate
+
+    - name: Terraform plan
+      if: ${{ inputs.destroy-environment != true }}
+      run: terraform plan -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+
+    - name: Terraform apply
+      if: ${{ inputs.destroy-environment != true }}
+      run: terraform apply -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+
+    - name: Destroy infrastructure
+      if: ${{ inputs.destroy-environment == true }}
+      run: |
+        terraform plan -destroy -compact-warnings -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
+        terraform apply -destroy -compact-warnings -auto-approve -var-file="${{ env.CONFIG_PATH }}/values.tfvars"
